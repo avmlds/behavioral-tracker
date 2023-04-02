@@ -1,0 +1,25 @@
+version: "2"
+
+volumes:
+  behavioral-bot:
+
+services:
+  postgres:
+    image: postgres:12
+    volumes:
+      - behavioral-bot:/var/lib/postgresql/data
+    env_file:
+      - .env
+    expose:
+      - "5432"
+    ports:
+      - "127.0.0.1:5433:5432"
+  backend:
+    build:
+      context: scheduler/
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "443:443"
+    env_file:
+      - .env
