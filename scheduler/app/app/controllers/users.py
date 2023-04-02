@@ -4,6 +4,7 @@ from typing import Optional
 
 from telebot.types import Message
 
+from app.constants import key_callbacks
 from app.controllers import BaseController
 from app.models.users import BotUser, UserState
 
@@ -114,3 +115,57 @@ class UserController(BaseController):
         return self.state_controller.update_state_data(
             message=message, user_state_data=data, meta=meta
         )
+
+    def append_to_user_state_data(
+        self,
+        message: Message,
+        data: str,
+    ):
+        current_data = self.get_user_state_data(message)
+        if current_data:
+            current_data = f"{current_data['data']}."
+        else:
+            current_data = ""
+        new_data = f"{current_data}{data}"
+        return self.update_user_state_data(message, new_data)
+
+    def pop_from_user_state_data(
+        self,
+        message: Message,
+    ):
+        user_data = self.get_user_state_data(message)
+        if user_data:
+            user_data = user_data["data"]
+        else:
+            user_data = ""
+
+        all_user_data = user_data.rsplit(".", maxsplit=1)
+        all_user_data_len = len(all_user_data)
+
+        if all_user_data_len == 1:
+            self.update_user_state_data(message, key_callbacks.START_CALLBACK)
+            return all_user_data[0]
+
+        previous_data, current_data = all_user_data
+        self.update_user_state_data(message, previous_data)
+        return current_data
+
+    def get_last_user_state_data_item(self, message: Message):
+        user_data = self.get_user_state_data(message)
+        if user_data:
+            user_data = user_data["data"]
+        else:
+            user_data = ""
+        return user_data.rsplit(".", maxsplit=1)[-1]
+
+    def get_mood_callbacks(self, message: Message):
+        user_state_data = self.get_user_state_data(message)
+        if not user_state_data:
+            # TODO: Handle this exception and return start button
+            raise Exception("Person is not in appropriate state for this request")
+        user_state_data_items = user_state_data["data"].split(".")
+        if len(user_state_data_items) != 4:
+            # TODO: Handle this exception and return start button
+            raise Exception("Person is not in appropriate state for this request")
+        mood_callback, spectrum_callback = user_state_data_items[-2:]
+        return mood_callback, spectrum_callback

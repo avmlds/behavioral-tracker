@@ -16,13 +16,17 @@ def get_session(func):
     def wrapper(*args, **kwargs):
         session = scoped_session(SessionLocal)()
         try:
-            logger.info("Database session opened, Session ObjectID %s", str(id(session)))
+            logger.info(
+                "Database session opened, Session ObjectID %s", str(id(session))
+            )
             func(*args, **kwargs, session=session)
         except Exception as e:
             logger.exception(e)
         finally:
             session.close()
-            logger.info("Database session closed, Session ObjectID %s", str(id(session)))
+            logger.info(
+                "Database session closed, Session ObjectID %s", str(id(session))
+            )
 
     return wrapper
 
@@ -123,9 +127,9 @@ class BaseController:
 
     @classmethod
     def _generic_update(cls, model, id_: int, **kwargs):
-        cls._connection.query(model).filter(
-            cls.__base_model__.id == id_
-        ).update(**kwargs)
+        cls._connection.query(model).filter(cls.__base_model__.id == id_).update(
+            **kwargs
+        )
         try:
             cls._connection.commit()
             return True

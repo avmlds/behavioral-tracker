@@ -5,14 +5,12 @@ from sqlalchemy import (
     Numeric,
     BigInteger,
     ForeignKey,
-    CheckConstraint,
     DateTime,
     func,
     JSON,
 )
 
 from app.database.base_class import Base
-from app.constants.states import ALL_STATES_STRING
 
 
 class BotUser(Base):
@@ -28,7 +26,6 @@ class BotUser(Base):
 
 class UserState(Base):
     __tablename__ = "user_state"
-    __tableargs__ = (CheckConstraint(f"user_state in ({ALL_STATES_STRING})"),)
 
     id = Column(BigInteger, autoincrement=True, primary_key=True)
     user_id = Column(BigInteger, ForeignKey("bot_user.id"), unique=True)
@@ -38,10 +35,11 @@ class UserState(Base):
     updated_at = Column(DateTime, server_default=func.now())
 
 
-class UserCategory(Base):
-    __tablename__ = "user_category"
+class UserMood(Base):
+    __tablename__ = "user_mood"
 
     id = Column(BigInteger, autoincrement=True, primary_key=True)
     user_id = Column(BigInteger, ForeignKey("bot_user.id"))
+    spectrum_id = Column(BigInteger, ForeignKey("spectrum.id"))
     activity_id = Column(BigInteger, ForeignKey("activity.id"))
     created_at = Column(DateTime, server_default=func.now())

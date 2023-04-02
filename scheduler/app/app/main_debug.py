@@ -6,7 +6,7 @@ import app.constants.states as states
 from app.constants import key_callbacks
 from app.controllers import UserController
 from app.controllers.base import get_session
-from app.core.server import bot, start_server
+from app.core.server import bot, start_polling
 from app.views.base import MessageViewRegistry, QueryViewRegistry
 
 logger = logging.getLogger()
@@ -31,7 +31,6 @@ def handle_help(message, session):
 @bot.callback_query_handler(lambda query: query.data in QueryViewRegistry)
 @get_session
 def select_category(query: CallbackQuery, session):
-
     message = query.message
     data = query.data
 
@@ -55,4 +54,4 @@ def operate_messages(message: Message, session):
 
 
 if __name__ == "__main__":
-    start_server()
+    start_polling()

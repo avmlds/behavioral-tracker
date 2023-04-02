@@ -1,3 +1,4 @@
-from .categories import Activity, Category
-from .users import BotUser, UserState, UserCategory
+from .activity import Activity
+from .mood import Mood, Spectrum
+from .users import BotUser, UserState, UserMood
 from .feedback import UserFeedback

@@ -6,6 +6,7 @@ volumes:
 services:
   postgres:
     image: postgres:12
+    restart: always
     volumes:
       - behavioral-bot:/var/lib/postgresql/data
     env_file:
@@ -13,7 +14,7 @@ services:
     expose:
       - "5432"
     ports:
-      - "127.0.0.1:5433:5432"
+      - "127.0.0.1:5432:5432"
   backend:
     build:
       context: scheduler/
